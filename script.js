@@ -22,16 +22,19 @@ const pieces = {
   L: { shape: [[0,0,1],[1,1,1]], color: 'L' }
 };
 
+// 그리드 초기화
 function initGrid() {
   grid = Array.from({ length: rows }, () => Array(cols).fill(null));
 }
 
+// 랜덤 블록 생성
 function randomPiece() {
   const keys = Object.keys(pieces);
   const type = keys[Math.floor(Math.random() * keys.length)];
   return { shape: pieces[type].shape, color: pieces[type].color };
 }
 
+// 그리드와 블록 그리기
 function drawGrid() {
   container.innerHTML = '';
   for(let r=0; r<rows; r++){
@@ -46,6 +49,7 @@ function drawGrid() {
   if(currentPiece) drawPiece(currentPiece, currentPos, container, cols);
 }
 
+// 블록 그리기
 function drawPiece(piece, pos, targetContainer, targetCols) {
   piece.shape.forEach((row, i) => {
     row.forEach((val, j) => {
@@ -59,6 +63,7 @@ function drawPiece(piece, pos, targetContainer, targetCols) {
   });
 }
 
+// 다음 블록 표시
 function drawNext() {
   nextContainer.innerHTML = '';
   for(let r=0; r<4; r++){
@@ -71,10 +76,11 @@ function drawNext() {
   if(nextPiece) drawPiece(nextPiece, {x:0, y:0}, nextContainer, 4);
 }
 
-function collision(xOffset=0, yOffset=0, newShape=currentPiece.shape){
-  for(let y=0; y<newShape.length; y++){
-    for(let x=0; x<newShape[y].length; x++){
-      if(newShape[y][x]){
+// 충돌 체크
+function collision(xOffset=0, yOffset=0, shape=currentPiece.shape){
+  for(let y=0; y<shape.length; y++){
+    for(let x=0; x<shape[y].length; x++){
+      if(shape[y][x]){
         const newX = currentPos.x + x + xOffset;
         const newY = currentPos.y + y + yOffset;
         if(newX < 0 || newX >= cols || newY >= rows || (grid[newY] && grid[newY][newX])) return true;
@@ -87,9 +93,7 @@ function collision(xOffset=0, yOffset=0, newShape=currentPiece.shape){
 // 그림자 블록 표시
 function drawShadow() {
   let shadowY = currentPos.y;
-  while(!collision(0, shadowY - currentPos.y +1)) {
-    shadowY++;
-  }
+  while(!collision(0, shadowY - currentPos.y +1)) shadowY++;
   currentPiece.shape.forEach((row, i) => {
     row.forEach((val, j) => {
       if(val){
@@ -102,6 +106,7 @@ function drawShadow() {
   });
 }
 
+// 블록 고정
 function fixPiece() {
   currentPiece.shape.forEach((row, i) => {
     row.forEach((val, j) => {
@@ -112,6 +117,7 @@ function fixPiece() {
   spawnPiece();
 }
 
+// 줄 삭제
 function clearLines() {
   let lines = 0;
   grid = grid.filter(row => {
@@ -130,10 +136,12 @@ function clearLines() {
   }
 }
 
+// 블록 회전
 function rotate(piece) {
   return piece[0].map((_, i) => piece.map(row => row[i]).reverse());
 }
 
+// 블록 한 칸 떨어뜨리기
 function drop() {
   if(!collision(0,1)){
     currentPos.y++;
@@ -143,14 +151,15 @@ function drop() {
   drawGrid();
 }
 
+// 블록 한 번에 떨어뜨리기 (Space 키)
 function hardDrop() {
-  while(!collision(0,1)) {
-    currentPos.y++;
-  }
+  let dropY = currentPos.y;
+  while(!collision(0, dropY - currentPos.y +1)) dropY++;
+  currentPos.y = dropY;
   fixPiece();
-  drawGrid();
 }
 
+// 새로운 블록 생성
 function spawnPiece() {
   currentPiece = nextPiece;
   currentPos = { x: 3, y: 0 };
@@ -162,6 +171,7 @@ function spawnPiece() {
   }
 }
 
+// 키보드 이벤트
 document.addEventListener('keydown', e => {
   if(!currentPiece) return;
   if(e.key === 'ArrowLeft' && !collision(-1,0)) currentPos.x--;
@@ -171,10 +181,14 @@ document.addEventListener('keydown', e => {
     const rotated = rotate(currentPiece.shape);
     if(!collision(0,0,rotated)) currentPiece.shape = rotated;
   }
-  if(e.key === 'Enter') hardDrop();
+  if(e.code === 'Space') { // Space 키로 hard drop
+    e.preventDefault(); // 스크롤 방지
+    hardDrop();
+  }
   drawGrid();
 });
 
+// 게임 시작 버튼
 startBtn.addEventListener('click', () => {
   clearInterval(gameInterval);
   initGrid();

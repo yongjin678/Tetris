@@ -52,10 +52,6 @@ body {
     height: 25px;
   }
   
-  .filled {
-    border-color: #fff;
-  }
-  
   .I { background: #00ffff; }
   .O { background: #ffff00; }
   .T { background: #a800ff; }
@@ -63,6 +59,11 @@ body {
   .Z { background: #ff0000; }
   .J { background: #0000ff; }
   .L { background: #ff8000; }
+  
+  .shadow {
+    background: rgba(255,255,255,0.2) !important;
+    border-color: #555 !important;
+  }
   
   button {
     margin-top: 20px;
@@ -78,10 +79,5 @@ body {
   
   button:hover {
     background: #e67e22;
-  }
-  
-  .shadow {
-    background: rgba(255,255,255,0.2) !important;
-    border-color: #555 !important;
   }
   
