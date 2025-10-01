@@ -1,14 +1,27 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
-    <title>Tetris</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>테트리스</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="scoreboard">Score : <span id="score">0</span></div>
-    <div class="game-container" id="game-container"></div>
+<div class="container">
+  <div class="sidebar">
+    <h2>테트리스</h2>
+    <div class="scoreboard">점수: <span id="score">0</span></div>
+    <div class="next-piece">
+      <h3>다음 블록</h3>
+      <div id="next-container" class="game-container"></div>
+    </div>
+    <button id="start-btn">게임 시작</button>
+  </div>
+  <div class="main-game">
+    <div id="game-container" class="game-container"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
